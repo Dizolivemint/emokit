@@ -40,19 +40,34 @@ int main(int argc, char* argv[])
 
   char buffer[OUTPUT_BUFFER_SIZE];
 
-	emokit_device* d;
+	struct emokit_device* d;
 
 	d = emokit_create();
 	printf("Current epoc devices connected: %d\n", emokit_get_count(d, EMOKIT_VID, EMOKIT_PID));
-	if(emokit_open(d, EMOKIT_VID, EMOKIT_PID, 0) != 0 && !noHelmet)
+  int r = emokit_open(d, EMOKIT_VID, EMOKIT_PID, 1);
+	if(r != 0 && !noHelmet)
 	{
-		printf("CANNOT CONNECT\n");
+		emokit_close(d);
+		emokit_delete(d);
+		d = emokit_create();
+		r = emokit_open(d, EMOKIT_VID, EMOKIT_PID, 0);
+		if (r!=0) {
+			printf("CANNOT CONNECT: %d\n", r);
+			return 1;
+		}
 		return 1;
 	} else if(noHelmet) {
 		std::cout << "Sending random data" << std::endl;
 	}
 
 	if (!noHelmet) {
+    if (emokit_read_data(d)<=0) {
+      printf("Error reading from headset\n");
+      emokit_close(d);
+      emokit_delete(d);
+      return 1;
+    }
+
 		while(true)
 		{
 			if(emokit_read_data(d) > 0)
@@ -139,7 +154,7 @@ int main(int argc, char* argv[])
 			transmitSocket.Send( gyro.Data(), gyro.Size() );
 
 			battery << osc::BeginMessage( "/emokit/battery" )
-           << rand() % 100 << osc::EndMessage;
+              << rand() % 100 << osc::EndMessage;
 			transmitSocket.Send( battery.Data(), battery.Size() );
 
       channel_quality << osc::BeginMessage( "/emokit/channel_quality" );
