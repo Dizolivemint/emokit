@@ -78,6 +78,7 @@ int main(int argc, char* argv[])
                   << "; gyroY: " << (int)frame.gyroY
                   << "; F3: " << frame.F3
                   << "; FC6: " << frame.FC6
+                  << "; F3 quality: " << frame.cq.F3
                   << "; battery: " << (int)frame.battery << "%";
 
 				flush(std::cout);
