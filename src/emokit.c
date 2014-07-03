@@ -192,7 +192,7 @@ void emokit_get_crypto_key(struct emokit_device* s, int dev_type) {
 	s->key[0] = (uint8_t)s->serial[l-1];
 	s->key[1] = '\0';
 	s->key[2] = (uint8_t)s->serial[l-2];
-	if(type) {
+	if(!type) {
 		s->key[3] = 'H';
 		s->key[4] = (uint8_t)s->serial[l-1];
 		s->key[5] = '\0';
