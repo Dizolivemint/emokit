@@ -126,7 +126,8 @@ int main(int argc, char* argv[])
 
 			osc::OutboundPacketStream channels( buffer, OUTPUT_BUFFER_SIZE );
 			osc::OutboundPacketStream gyro( buffer, OUTPUT_BUFFER_SIZE );
-			osc::OutboundPacketStream info( buffer, OUTPUT_BUFFER_SIZE );
+			osc::OutboundPacketStream battery( buffer, OUTPUT_BUFFER_SIZE );
+      osc::OutboundPacketStream channel_quality( buffer, OUTPUT_BUFFER_SIZE );
 
 			channels << osc::BeginMessage( "/emokit/channels" );
 			for (int i=0 ; i < 14 ; i++) channels << rand() % 10000;
@@ -137,11 +138,14 @@ int main(int argc, char* argv[])
            << rand() % 100 << rand() % 100 << osc::EndMessage;
 			transmitSocket.Send( gyro.Data(), gyro.Size() );
 
-			info << osc::BeginMessage( "/emokit/info" )
-           << rand() % 100;
-      for (int i = 0; i<14 ; i++) info << rand() % 50;
-      info << osc::EndMessage;
-			transmitSocket.Send( info.Data(), info.Size() );
+			battery << osc::BeginMessage( "/emokit/battery" )
+           << rand() % 100 << osc::EndMessage;
+			transmitSocket.Send( battery.Data(), battery.Size() );
+
+      channel_quality << osc::BeginMessage( "/emokit/channel_quality" );
+			for (int i=0 ; i < 14 ; i++) channel_quality << rand() % 10000;
+			channel_quality << osc::EndMessage;
+			transmitSocket.Send( channel_quality.Data(), channel_quality.Size() );
 		}
 	}
 
